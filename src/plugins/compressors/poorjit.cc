@@ -4,13 +4,13 @@
 #include "libpressio_ext/cpp/options.h"
 #include "libpressio_ext/cpp/pressio.h"
 #include <libpressio_jit_ext/cpp/generator.h>
-#include <poorjit/poorjit.h>
+#include <poorjit.h>
 #include <boost/process.hpp>
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/regex.hpp>
 #include <string>
 
-namespace libpressio { namespace poorjit_ns {
+namespace libpressio { namespace compressors { namespace poorjit_ns {
     using namespace libpressio_jit;
     namespace bp=boost::process;
 
@@ -30,7 +30,7 @@ namespace libpressio { namespace poorjit_ns {
         return s;
     }
 
-class poorjit_compressor_plugin : public libpressio_compressor_plugin {
+class poorjit_compressor_plugin : public libpressio::compressors::libpressio_compressor_plugin {
 public:
   struct pressio_options get_options_impl() const override
   {
@@ -175,8 +175,8 @@ public:
   std::vector<std::string> pkgconfig_args;
 };
 
-static pressio_register compressor_many_fields_plugin(compressor_plugins(), "poorjit", []() {
+pressio_register plugin(compressor_plugins(), "poorjit", []() {
   return compat::make_unique<poorjit_compressor_plugin>();
 });
 
-} }
+} } }

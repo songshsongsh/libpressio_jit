@@ -5,6 +5,7 @@
 
 namespace libpressio_jit
 {
+    using namespace libpressio;
     struct pressio_generator_plugin : public pressio_configurable, public pressio_versionable {
         std::string generate() {
             return generate_impl();
