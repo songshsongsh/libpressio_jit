@@ -74,12 +74,20 @@ target_compile_options(libpressio_jit PRIVATE
   $<$<CONFIG:RelWithDebInfo>: ${NO_OMIT_FRAME_POINTER_FLAG}>
   )
 
-option(LIBPRESSIO_JIT_HAS_POORJIT "build support for the poorjit jit compressor" OFF)
+option(LIBPRESSIO_JIT_HAS_POORJIT "build support for the poorjit jit compressor" ON)
 if(LIBPRESSIO_JIT_HAS_POORJIT)
     find_package(poorjit REQUIRED)
     find_package(Boost REQUIRED)
     target_sources(libpressio_jit PRIVATE src/plugins/compressors/poorjit.cc)
     target_link_libraries(libpressio_jit PRIVATE poorjit::poorjit Boost::headers)
+endif()
+
+option(LIBPRESSIO_JIT_HAS_PYCUKE "build support for pycuke python generator" ON)
+if(LIBPRESSIO_JIT_HAS_PYCUKE)
+    find_package(Python REQUIRED COMPONENTS Interpreter Development)
+    find_package(pybind11 REQUIRED)
+    target_sources(libpressio_jit PRIVATE src/plugins/generators/pycuke_generator.cc)
+    target_link_libraries(libpressio_jit PRIVATE pybind11::embed Python::Python)
 endif()
 
 option(LIBPRESSIO_JIT_WERROR ON)
@@ -129,7 +137,7 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libpressio_jit.pc DESTINATION ${CMAKE_
 
 
 if(BUILD_TESTING)
-  add_subdirectory(test)
+ add_subdirectory(test)
 endif()
 
 option(USE_CLANG_TIDY "include clang-tidy warnings in the build log" OFF)

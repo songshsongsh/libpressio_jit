@@ -1,4 +1,4 @@
-find_package(GTest)
+find_package(GTest REQUIRED)
 if(NOT GTEST_FOUND)
 configure_file(GTestCMakeLists.txt.in googletest-download/CMakeLists.txt)
 
@@ -33,7 +33,7 @@ include(GoogleTest)
 function(add_gtest)
   get_filename_component(test_name ${ARGV0} NAME_WE)
   add_executable(${test_name} ${ARGV})
-  target_link_libraries(${test_name} PRIVATE libpressio_jit gtest_main gtest gmock)
+  target_link_libraries(${test_name} PRIVATE libpressio_jit GTest::gtest_main GTest::gtest GTest::gmock)
   gtest_discover_tests(${test_name})
 endfunction()
 

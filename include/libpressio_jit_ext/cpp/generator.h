@@ -2,13 +2,17 @@
 #include <libpressio_ext/cpp/versionable.h>
 #include <libpressio_ext/cpp/pressio.h>
 #include <sstream>
-
+// #include <map>
 namespace libpressio_jit
 {
     using namespace libpressio;
     struct pressio_generator_plugin : public pressio_configurable, public pressio_versionable {
         std::string generate() {
             return generate_impl();
+        }
+
+        std::map<std::string, std::string> generate_files() {
+        return generate_files_impl();
         }
 
         pressio_options get_configuration() const final {
@@ -33,6 +37,11 @@ namespace libpressio_jit
     protected:
         virtual pressio_options get_configuration_impl() const=0;
         virtual std::string generate_impl()=0; 
+        virtual std::map<std::string, std::string> generate_files_impl() {
+            auto src = generate_impl();
+            if (src.empty()) return {};
+                return {{"source.cc", src}};
+        }
     };
 
     struct pressio_generator {
