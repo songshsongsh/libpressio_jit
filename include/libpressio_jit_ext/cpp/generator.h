@@ -2,7 +2,6 @@
 #include <libpressio_ext/cpp/versionable.h>
 #include <libpressio_ext/cpp/pressio.h>
 #include <sstream>
-// #include <map>
 namespace libpressio_jit
 {
     using namespace libpressio;

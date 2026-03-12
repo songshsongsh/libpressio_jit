@@ -79,26 +79,25 @@ public:
             py::object cpp = codegen.attr("cpu").attr("print_cpp")(ir);
             std::string code = cpp.cast<std::string>();
 
-            std::ofstream ofs("/data/not_backed_up/ssong10/libpressio_dev/envs/libpressio-dev/libpressio-jit/test/generated_decompression.cc");
-            ofs << code;
-
             return code;
 
         } catch (const py::error_already_set& e) {
-            return set_error_and_empty(1, std::string("python error: ") + e.what());
+            set_error(1, std::string("python error: ") + e.what());
+            return "";
         } catch (const std::exception& e) {
-            return set_error_and_empty(1, std::string("pycuke generator error: ") + e.what());
+            set_error(1, std::string("pycuke generator error: ") + e.what());
+            return "";
         }
     }
 
     int set_options(pressio_options const& opts) override {
-        get(opts, "pycuke:frontend_code", &frontend_code);
+        get(opts, "pycuke:code", &frontend_code);
         get(opts, "pycuke:module_name", &module_name);
         get(opts, "pycuke:entry_function", &entry_function);
         get(opts, "pycuke:python_paths", &python_paths);
 
         if (frontend_code.empty()) {
-            return set_error(1, "pycuke:frontend_code is required");
+            return set_error(1, "pycuke:code is required");
         }
 
         if (module_name.empty()) {
@@ -114,7 +113,7 @@ public:
 
     pressio_options get_options() const override {
         pressio_options opts;
-        set(opts, "pycuke:frontend_code", frontend_code);
+        set(opts, "pycuke:code", frontend_code);
         set(opts, "pycuke:module_name", module_name);
         set(opts, "pycuke:entry_function", entry_function);
         set(opts, "pycuke:python_paths", python_paths);
@@ -125,10 +124,8 @@ public:
         pressio_options opts;
         set(opts, "pressio:description",
             R"(generate full libpressio plugin source by calling a Python compiler)");
-        set(opts, "pycuke:frontend_code",
+        set(opts, "pycuke:code",
             "Python frontend/DSL definition passed into the Python compiler");
-        set(opts, "pycuke:module_name",
-            "Python module name to import, default = pycuke");
         set(opts, "pycuke:entry_function",
             "Python function name to call, default = compile_source");
         set(opts, "pycuke:python_paths",
@@ -142,10 +139,7 @@ public:
         set(opts, "pressio:stability", "experimental");
         set(opts, "pressio:highlevel",
             std::vector<std::string>{
-                "pycuke:frontend_code",
-                "pycuke:module_name",
-                "pycuke:entry_function",
-                "pycuke:python_paths"
+                "pycuke:code",
             });
         return opts;
     }
@@ -159,11 +153,6 @@ public:
     }
 
 private:
-    std::string set_error_and_empty(int code, std::string const& msg) {
-        set_error(code, msg);
-        return "";
-    }
-
     std::string frontend_code;
     std::string module_name = "pycuke";
     std::string entry_function = "compile_source";

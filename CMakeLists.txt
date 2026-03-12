@@ -74,7 +74,7 @@ target_compile_options(libpressio_jit PRIVATE
   $<$<CONFIG:RelWithDebInfo>: ${NO_OMIT_FRAME_POINTER_FLAG}>
   )
 
-option(LIBPRESSIO_JIT_HAS_POORJIT "build support for the poorjit jit compressor" ON)
+option(LIBPRESSIO_JIT_HAS_POORJIT "build support for the poorjit jit compressor" OFF)
 if(LIBPRESSIO_JIT_HAS_POORJIT)
     find_package(poorjit REQUIRED)
     find_package(Boost REQUIRED)
